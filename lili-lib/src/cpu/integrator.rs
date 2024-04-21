@@ -1,4 +1,4 @@
-use std::cmp::min;
+use std::ops::Mul;
 
 use crate::context::LiliOptions;
 
@@ -54,6 +54,7 @@ struct Bounds3f {}
 
 struct Ray {}
 
+#[derive(Clone, Copy)]
 struct Point2i {}
 
 impl Point2i {
@@ -62,7 +63,7 @@ impl Point2i {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 struct Sampler {}
 
 impl Sampler {
@@ -73,15 +74,25 @@ impl Sampler {
     fn start_pixel_sample(&self, pixel: &Point2i, sample_index: i32) {
         todo!()
     }
+
+    fn get_1d(&self) -> f32 {
+        todo!()
+    }
 }
 
 #[derive(Default)]
 struct ScratchBuffer {}
 
-struct Camera {}
+struct Camera {
+    pub film: Film,
+}
 
 impl Camera {
-    fn film(&self) -> Film {
+    fn generate_ray_differential(
+        &self,
+        camera_sample: CameraSample,
+        lambda: &SampledWavelengths,
+    ) -> Option<CameraRayDifferential> {
         todo!()
     }
 }
@@ -92,7 +103,43 @@ impl Film {
     fn pixel_bounds(&self) -> Bounds2i {
         todo!()
     }
+
+    fn sample_wavelengths(&self, sample: f32) -> SampledWavelengths {
+        todo!()
+    }
+
+    fn filter(&self) -> Filter {
+        todo!()
+    }
+
+    fn uses_visible_surface(&self) -> bool {
+        todo!()
+    }
+
+    fn add_sample(
+        &mut self,
+        pixel: Point2i,
+        l: SampledSpectrum,
+        lambda: SampledWavelengths,
+        visible_surface: &VisibleSurface,
+        filter_weight: f32,
+    ) {
+        todo!()
+    }
 }
+
+#[derive(Clone, Copy)]
+struct CameraSample {
+    pub filter_weight: f32,
+}
+
+impl CameraSample {
+    fn new(sampler: &Sampler, pixel: Point2i, filter: Filter) -> Self {
+        todo!()
+    }
+}
+
+struct Filter {}
 
 struct Bounds2i {}
 
@@ -111,7 +158,7 @@ impl Bounds2i {
 }
 
 trait Renderer {
-    fn render(&self, options: LiliOptions);
+    fn render(&mut self, options: LiliOptions);
 }
 
 struct ProgressReporter {}
@@ -125,6 +172,34 @@ impl ProgressReporter {
         todo!()
     }
 }
+
+struct RayDifferential {}
+
+struct CameraRayDifferential {
+    pub ray: RayDifferential,
+    pub weight: SampledSpectrum,
+}
+
+struct SampledWavelengths {}
+
+struct SampledSpectrum {}
+
+impl SampledSpectrum {
+    fn new(wavelength: f32) -> Self {
+        todo!()
+    }
+}
+
+impl Mul for SampledSpectrum {
+    type Output = SampledSpectrum;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        todo!()
+    }
+}
+
+#[derive(Default)]
+struct VisibleSurface {}
 
 struct Integrator<R: Renderer> {
     pub aggregate: Primitive,
@@ -188,7 +263,7 @@ impl<R: Renderer> IntegratorTrait for Integrator<R> {
 }
 
 impl<R: Renderer> Renderer for Integrator<R> {
-    fn render(&self, options: LiliOptions) {
+    fn render(&mut self, options: LiliOptions) {
         self.renderer.render(options)
     }
 }
@@ -196,10 +271,11 @@ impl<R: Renderer> Renderer for Integrator<R> {
 trait PixelEvaluator {
     fn evaluate_pixel_sample(
         &self,
-        point: &Point2i,
+        pixel: Point2i,
         sample_index: i32,
-        sampler: &Sampler,
+        sampler: Sampler,
         scratch_buffer: &ScratchBuffer,
+        camera: &mut Camera,
     );
 }
 
@@ -230,12 +306,12 @@ impl<E: PixelEvaluator> ImageTileIntegrator<E> {
 }
 
 impl<E: PixelEvaluator> Renderer for ImageTileIntegrator<E> {
-    fn render(&self, options: LiliOptions) {
+    fn render(&mut self, options: LiliOptions) {
         // TODO: Thread local these, pg 25
         let sampler = self.sampler_prototype.clone();
         let scratch_buffer = ScratchBuffer::default();
 
-        let pixel_bounds = self.camera.film().pixel_bounds();
+        let pixel_bounds = self.camera.film.pixel_bounds();
         let spp = self.sampler_prototype.samples_per_pixel();
         let progress =
             ProgressReporter::new(spp as i64 * pixel_bounds.area(), "Rendering", options.quiet);
@@ -252,10 +328,11 @@ impl<E: PixelEvaluator> Renderer for ImageTileIntegrator<E> {
                     for sample_index in (wave_start..wave_end) {
                         sampler.start_pixel_sample(&pixel, sample_index);
                         self.pixel_evaluator.evaluate_pixel_sample(
-                            &pixel,
+                            pixel,
                             sample_index,
-                            &sampler,
+                            sampler,
                             &scratch_buffer,
+                            &mut self.camera,
                         );
                     }
                     progress.update((wave_end - wave_start))
@@ -263,8 +340,89 @@ impl<E: PixelEvaluator> Renderer for ImageTileIntegrator<E> {
             }
 
             wave_start = wave_end;
-            wave_end = min(spp, wave_end + next_wave_size);
-            next_wave_size = min(2 * next_wave_size, 64);
+            wave_end = spp.min(wave_end + next_wave_size);
+            next_wave_size = 2 * next_wave_size.min(64);
+
+            // TODO: write current image to disk, pg 28
         }
+    }
+}
+
+trait RadianceComputer {
+    fn li(
+        &self,
+        ray: RayDifferential,
+        lambda: &SampledWavelengths,
+        sampler: Sampler,
+        scratch_buffer: &ScratchBuffer,
+        visible_surface: Option<&mut VisibleSurface>,
+    ) -> SampledSpectrum;
+}
+
+struct RayIntegrator<R: RadianceComputer> {
+    pub radiance_computer: R,
+}
+
+impl<R: RadianceComputer> RayIntegrator<R> {
+    fn new(
+        camera: Camera,
+        sampler: Sampler,
+        aggregate: Primitive,
+        lights: Vec<Light>,
+        radiance_computer: R,
+    ) -> Integrator<ImageTileIntegrator<RayIntegrator<R>>> {
+        let e = Self { radiance_computer };
+
+        ImageTileIntegrator::new(camera, sampler, aggregate, lights, e)
+    }
+}
+
+impl<R: RadianceComputer> PixelEvaluator for RayIntegrator<R> {
+    fn evaluate_pixel_sample(
+        &self,
+        pixel: Point2i,
+        sample_index: i32,
+        sampler: Sampler,
+        scratch_buffer: &ScratchBuffer,
+        camera: &mut Camera,
+    ) {
+        let lu = sampler.get_1d();
+        let lambda = camera.film.sample_wavelengths(lu);
+
+        let filter = camera.film.filter();
+        let camera_sample = CameraSample::new(&sampler, pixel, filter);
+
+        let mut camera_ray = camera.generate_ray_differential(camera_sample, &lambda);
+
+        let mut l = SampledSpectrum::new(0f32);
+        let mut visible_surface = VisibleSurface::default();
+
+        if let Some(mut ray) = camera_ray {
+            let ray_diff_scale = 0.125f32.max(1f32 / (sampler.samples_per_pixel() as f32).sqrt());
+
+            let initialize_visible_surface = camera.film.uses_visible_surface();
+            let l = ray.weight
+                * self.radiance_computer.li(
+                    ray.ray,
+                    &lambda,
+                    sampler,
+                    scratch_buffer,
+                    if (initialize_visible_surface) {
+                        Some(&mut visible_surface)
+                    } else {
+                        None
+                    },
+                );
+
+            // TODO: Implement error checking for impossible radiance values, pg 31
+        }
+
+        camera.film.add_sample(
+            pixel,
+            l,
+            lambda,
+            &visible_surface,
+            camera_sample.filter_weight,
+        );
     }
 }
