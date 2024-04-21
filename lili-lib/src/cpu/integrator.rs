@@ -1,8 +1,18 @@
-use std::ops::Mul;
+use std::{
+    f32::consts::PI,
+    ops::{Add, Div, Mul, Neg},
+};
 
 use crate::context::LiliOptions;
 
 // Dummy structs temporarily
+fn SampleUniformSphere(u: Point2f) -> Vector3f {
+    todo!()
+}
+
+fn AbsDot(a: &Vector3f, b: &Vector3f) -> f32 {
+    todo!()
+}
 
 struct Primitive {}
 
@@ -38,6 +48,10 @@ impl Light {
     fn light_type(&self) -> LightType {
         todo!()
     }
+
+    fn le(&self, ray: &Ray, lambda: &SampledWavelengths) -> SampledSpectrum {
+        todo!()
+    }
 }
 
 // TODO: Rustify this
@@ -47,12 +61,63 @@ enum LightType {
     Infinite,
 }
 
-struct ShapeIntersection {}
+struct BSDF {}
+
+impl BSDF {
+    fn f(&self, wo: &Vector3f, wp: &Vector3f) -> SampledSpectrum {
+        todo!()
+    }
+}
+
+struct Shading {
+    n: Vector3f,
+}
+
+struct ShapeIntersection {
+    intr: SurfaceInteraction,
+    shading: Shading,
+}
+
+impl ShapeIntersection {
+    fn le(&self, wo: &Vector3f, lambda: &SampledWavelengths) -> SampledSpectrum {
+        todo!()
+    }
+
+    fn bsdf(
+        &self,
+        ray: &Ray,
+        lambda: &SampledWavelengths,
+        camera: &Camera,
+        scratch_buffer: &ScratchBuffer,
+        sampler: &Sampler,
+    ) -> BSDF {
+        todo!()
+    }
+
+    fn spawn_ray(&self, wp: &Vector3f) -> RayDifferential {
+        todo!()
+    }
+}
+
+struct SurfaceInteraction {}
 
 #[derive(Default)]
 struct Bounds3f {}
 
-struct Ray {}
+struct Ray {
+    pub d: Vector3f,
+}
+
+#[derive(Clone, Copy)]
+struct Vector3f {}
+
+impl Neg for Vector3f {
+    type Output = Vector3f;
+
+    fn neg(self) -> Self::Output {
+        todo!()
+    }
+}
 
 #[derive(Clone, Copy)]
 struct Point2i {}
@@ -78,7 +143,14 @@ impl Sampler {
     fn get_1d(&self) -> f32 {
         todo!()
     }
+
+    fn get_2d(&self) -> Point2f {
+        todo!()
+    }
 }
+
+#[derive(Clone, Copy)]
+struct Point2f {}
 
 #[derive(Default)]
 struct ScratchBuffer {}
@@ -173,7 +245,9 @@ impl ProgressReporter {
     }
 }
 
-struct RayDifferential {}
+struct RayDifferential {
+    ray: Ray,
+}
 
 struct CameraRayDifferential {
     pub ray: RayDifferential,
@@ -182,10 +256,15 @@ struct CameraRayDifferential {
 
 struct SampledWavelengths {}
 
+#[derive(Default)]
 struct SampledSpectrum {}
 
 impl SampledSpectrum {
     fn new(wavelength: f32) -> Self {
+        todo!()
+    }
+
+    fn nonzero(&self) -> bool {
         todo!()
     }
 }
@@ -198,21 +277,49 @@ impl Mul for SampledSpectrum {
     }
 }
 
+impl Mul<f32> for SampledSpectrum {
+    type Output = SampledSpectrum;
+
+    fn mul(self, rhs: f32) -> Self::Output {
+        todo!()
+    }
+}
+
+impl Div<f32> for SampledSpectrum {
+    type Output = SampledSpectrum;
+
+    fn div(self, rhs: f32) -> Self::Output {
+        todo!()
+    }
+}
+
+impl Add for SampledSpectrum {
+    type Output = SampledSpectrum;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        todo!()
+    }
+}
+
 #[derive(Default)]
 struct VisibleSurface {}
 
-struct Integrator<R: Renderer> {
+trait IntersectorTrait {
+    fn intersect(&self, ray: &Ray, t_max: f32) -> Option<ShapeIntersection>;
+
+    fn intersect_p(&self, ray: &Ray, t_max: f32) -> bool;
+}
+
+struct AggregateIntersector {
     pub aggregate: Primitive,
 
     pub lights: Vec<Light>,
 
     pub infinite_lights: Vec<Light>,
-
-    pub renderer: R,
 }
 
-impl<R: Renderer> Integrator<R> {
-    fn new(aggregate: Primitive, mut lights: Vec<Light>, renderer: R) -> Self {
+impl AggregateIntersector {
+    fn new(aggregate: Primitive, mut lights: Vec<Light>) -> Self {
         let scene_bounds = if aggregate.valid() {
             aggregate.bounds()
         } else {
@@ -233,18 +340,11 @@ impl<R: Renderer> Integrator<R> {
             aggregate,
             lights,
             infinite_lights,
-            renderer,
         }
     }
 }
 
-trait IntegratorTrait {
-    fn intersect(&self, ray: &Ray, t_max: f32) -> Option<ShapeIntersection>;
-
-    fn intersect_p(&self, ray: &Ray, t_max: f32) -> bool;
-}
-
-impl<R: Renderer> IntegratorTrait for Integrator<R> {
+impl IntersectorTrait for AggregateIntersector {
     fn intersect(&self, ray: &Ray, t_max: f32) -> Option<ShapeIntersection> {
         if self.aggregate.valid() {
             self.aggregate.intersect(ray, t_max)
@@ -259,12 +359,6 @@ impl<R: Renderer> IntegratorTrait for Integrator<R> {
         } else {
             false
         }
-    }
-}
-
-impl<R: Renderer> Renderer for Integrator<R> {
-    fn render(&mut self, options: LiliOptions) {
-        self.renderer.render(options)
     }
 }
 
@@ -288,20 +382,12 @@ struct ImageTileIntegrator<E: PixelEvaluator> {
 }
 
 impl<E: PixelEvaluator> ImageTileIntegrator<E> {
-    fn new(
-        camera: Camera,
-        sampler: Sampler,
-        aggregate: Primitive,
-        lights: Vec<Light>,
-        pixel_evaluator: E,
-    ) -> Integrator<ImageTileIntegrator<E>> {
-        let s = Self {
+    fn new(camera: Camera, sampler: Sampler, pixel_evaluator: E) -> ImageTileIntegrator<E> {
+        Self {
             camera,
             sampler_prototype: sampler,
             pixel_evaluator,
-        };
-
-        Integrator::new(aggregate, lights, s)
+        }
     }
 }
 
@@ -355,6 +441,7 @@ trait RadianceComputer {
         lambda: &SampledWavelengths,
         sampler: Sampler,
         scratch_buffer: &ScratchBuffer,
+        camera: &Camera,
         visible_surface: Option<&mut VisibleSurface>,
     ) -> SampledSpectrum;
 }
@@ -367,13 +454,11 @@ impl<R: RadianceComputer> RayIntegrator<R> {
     fn new(
         camera: Camera,
         sampler: Sampler,
-        aggregate: Primitive,
-        lights: Vec<Light>,
         radiance_computer: R,
-    ) -> Integrator<ImageTileIntegrator<RayIntegrator<R>>> {
+    ) -> ImageTileIntegrator<RayIntegrator<R>> {
         let e = Self { radiance_computer };
 
-        ImageTileIntegrator::new(camera, sampler, aggregate, lights, e)
+        ImageTileIntegrator::new(camera, sampler, e)
     }
 }
 
@@ -381,7 +466,7 @@ impl<R: RadianceComputer> PixelEvaluator for RayIntegrator<R> {
     fn evaluate_pixel_sample(
         &self,
         pixel: Point2i,
-        sample_index: i32,
+        _sample_index: i32,
         sampler: Sampler,
         scratch_buffer: &ScratchBuffer,
         camera: &mut Camera,
@@ -407,6 +492,7 @@ impl<R: RadianceComputer> PixelEvaluator for RayIntegrator<R> {
                     &lambda,
                     sampler,
                     scratch_buffer,
+                    camera,
                     if (initialize_visible_surface) {
                         Some(&mut visible_surface)
                     } else {
@@ -424,5 +510,88 @@ impl<R: RadianceComputer> PixelEvaluator for RayIntegrator<R> {
             &visible_surface,
             camera_sample.filter_weight,
         );
+    }
+}
+
+struct RandomWalkIntegrator {
+    intersector: AggregateIntersector,
+
+    max_depth: i32,
+}
+
+impl RandomWalkIntegrator {
+    fn new(
+        max_depth: i32,
+        camera: Camera,
+        sampler: Sampler,
+        intersector: AggregateIntersector,
+    ) -> ImageTileIntegrator<RayIntegrator<Self>> {
+        let random_walk = Self {
+            intersector,
+            max_depth,
+        };
+
+        RayIntegrator::new(camera, sampler, random_walk)
+    }
+
+    fn li_random_walk(
+        &self,
+        ray: RayDifferential,
+        lambda: &SampledWavelengths,
+        sampler: Sampler,
+        scratch_buffer: &ScratchBuffer,
+        camera: &Camera,
+        depth: i32,
+    ) -> SampledSpectrum {
+        // TODO: Do we need f32::MAX?
+        let si = self.intersector.intersect(&ray.ray, f32::MAX);
+        match si {
+            None => self
+                .intersector
+                .infinite_lights
+                .iter()
+                .fold(SampledSpectrum::default(), |acc, l| {
+                    acc + l.le(&ray.ray, lambda)
+                }),
+            Some(isect) => {
+                // Le(p, w_o)
+                let wo = -ray.ray.d;
+                let le = isect.le(&wo, lambda);
+
+                // Terminate at max recursion
+                if depth > self.max_depth {
+                    return le;
+                }
+
+                // Evaluate bsdf for entering ray w_o and randomly sampled exiting ray w_p
+                let bsdf = isect.bsdf(&ray.ray, lambda, camera, scratch_buffer, &sampler);
+                let u = sampler.get_2d();
+                let wp = SampleUniformSphere(u);
+                let fcos = bsdf.f(&wo, &wp) * AbsDot(&wp, &isect.shading.n);
+                if !fcos.nonzero() {
+                    return le;
+                }
+
+                let ray = isect.spawn_ray(&wp);
+
+                le + fcos
+                    * self.li_random_walk(ray, lambda, sampler, scratch_buffer, camera, depth + 1)
+                    / (1f32 / (4f32 + PI))
+            }
+        }
+    }
+}
+
+impl RadianceComputer for RandomWalkIntegrator {
+    fn li(
+        &self,
+        ray: RayDifferential,
+        lambda: &SampledWavelengths,
+        sampler: Sampler,
+        scratch_buffer: &ScratchBuffer,
+        camera: &Camera,
+        _visible_surface: Option<&mut VisibleSurface>,
+    ) -> SampledSpectrum {
+        self.li_random_walk(ray, lambda, sampler, scratch_buffer, camera, 0)
     }
 }
