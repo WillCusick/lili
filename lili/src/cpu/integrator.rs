@@ -3,7 +3,7 @@ use std::{
     ops::{Add, Div, Mul, Neg},
 };
 
-use crate::context::LiliOptions;
+use crate::Options;
 
 // Dummy structs temporarily
 fn SampleUniformSphere(u: Point2f) -> Vector3f {
@@ -230,7 +230,7 @@ impl Bounds2i {
 }
 
 trait Renderer {
-    fn render(&mut self, options: LiliOptions);
+    fn render(&mut self, options: Options);
 }
 
 struct ProgressReporter {}
@@ -392,7 +392,7 @@ impl<E: PixelEvaluator> ImageTileIntegrator<E> {
 }
 
 impl<E: PixelEvaluator> Renderer for ImageTileIntegrator<E> {
-    fn render(&mut self, options: LiliOptions) {
+    fn render(&mut self, options: Options) {
         // TODO: Thread local these, pg 25
         let sampler = self.sampler_prototype.clone();
         let scratch_buffer = ScratchBuffer::default();
