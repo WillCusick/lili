@@ -8,6 +8,12 @@ use std::ffi::OsString;
 
 use crate::scene::BasicScene;
 
+#[cfg(not(f64))]
+type Float = f32;
+
+#[cfg(f64)]
+type Float = f64;
+
 #[derive(Debug, Default)]
 pub struct Options {
     pub seed: u32,

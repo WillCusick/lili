@@ -1,27 +1,24 @@
-use std::{
-    f32::consts::PI,
-    ops::{Add, Div, Mul, Neg},
-};
+use std::ops::{Add, Div, Mul, Neg};
 
-use crate::Options;
+use crate::{math, Float, Options};
 
 // Dummy structs temporarily
 fn SampleUniformSphere(u: Point2f) -> Vector3f {
     todo!()
 }
 
-fn AbsDot(a: &Vector3f, b: &Vector3f) -> f32 {
+fn AbsDot(a: &Vector3f, b: &Vector3f) -> Float {
     todo!()
 }
 
 struct Primitive {}
 
 impl Primitive {
-    fn intersect(&self, ray: &Ray, t_max: f32) -> Option<ShapeIntersection> {
+    fn intersect(&self, ray: &Ray, t_max: Float) -> Option<ShapeIntersection> {
         todo!()
     }
 
-    fn intersect_p(&self, ray: &Ray, t_max: f32) -> bool {
+    fn intersect_p(&self, ray: &Ray, t_max: Float) -> bool {
         todo!()
     }
 
@@ -140,7 +137,7 @@ impl Sampler {
         todo!()
     }
 
-    fn get_1d(&self) -> f32 {
+    fn get_1d(&self) -> Float {
         todo!()
     }
 
@@ -176,7 +173,7 @@ impl Film {
         todo!()
     }
 
-    fn sample_wavelengths(&self, sample: f32) -> SampledWavelengths {
+    fn sample_wavelengths(&self, sample: Float) -> SampledWavelengths {
         todo!()
     }
 
@@ -194,7 +191,7 @@ impl Film {
         l: SampledSpectrum,
         lambda: SampledWavelengths,
         visible_surface: &VisibleSurface,
-        filter_weight: f32,
+        filter_weight: Float,
     ) {
         todo!()
     }
@@ -202,7 +199,7 @@ impl Film {
 
 #[derive(Clone, Copy)]
 struct CameraSample {
-    pub filter_weight: f32,
+    pub filter_weight: Float,
 }
 
 impl CameraSample {
@@ -260,7 +257,7 @@ struct SampledWavelengths {}
 struct SampledSpectrum {}
 
 impl SampledSpectrum {
-    fn new(wavelength: f32) -> Self {
+    fn new(wavelength: Float) -> Self {
         todo!()
     }
 
@@ -277,18 +274,18 @@ impl Mul for SampledSpectrum {
     }
 }
 
-impl Mul<f32> for SampledSpectrum {
+impl Mul<Float> for SampledSpectrum {
     type Output = SampledSpectrum;
 
-    fn mul(self, rhs: f32) -> Self::Output {
+    fn mul(self, rhs: Float) -> Self::Output {
         todo!()
     }
 }
 
-impl Div<f32> for SampledSpectrum {
+impl Div<Float> for SampledSpectrum {
     type Output = SampledSpectrum;
 
-    fn div(self, rhs: f32) -> Self::Output {
+    fn div(self, rhs: Float) -> Self::Output {
         todo!()
     }
 }
@@ -305,9 +302,9 @@ impl Add for SampledSpectrum {
 struct VisibleSurface {}
 
 trait IntersectorTrait {
-    fn intersect(&self, ray: &Ray, t_max: f32) -> Option<ShapeIntersection>;
+    fn intersect(&self, ray: &Ray, t_max: Float) -> Option<ShapeIntersection>;
 
-    fn intersect_p(&self, ray: &Ray, t_max: f32) -> bool;
+    fn intersect_p(&self, ray: &Ray, t_max: Float) -> bool;
 }
 
 struct AggregateIntersector {
@@ -345,7 +342,7 @@ impl AggregateIntersector {
 }
 
 impl IntersectorTrait for AggregateIntersector {
-    fn intersect(&self, ray: &Ray, t_max: f32) -> Option<ShapeIntersection> {
+    fn intersect(&self, ray: &Ray, t_max: Float) -> Option<ShapeIntersection> {
         if self.aggregate.valid() {
             self.aggregate.intersect(ray, t_max)
         } else {
@@ -353,7 +350,7 @@ impl IntersectorTrait for AggregateIntersector {
         }
     }
 
-    fn intersect_p(&self, ray: &Ray, t_max: f32) -> bool {
+    fn intersect_p(&self, ray: &Ray, t_max: Float) -> bool {
         if self.aggregate.valid() {
             self.intersect_p(ray, t_max)
         } else {
@@ -479,12 +476,12 @@ impl<R: RadianceComputer> PixelEvaluator for RayIntegrator<R> {
 
         let mut camera_ray = camera.generate_ray_differential(camera_sample, &lambda);
 
-        let mut l = SampledSpectrum::new(0f32);
+        let mut l = SampledSpectrum::new(0.0);
         let mut visible_surface = VisibleSurface::default();
 
         if let Some(mut ray) = camera_ray {
-            let ray_diff_scale = 0.125f32.max(1f32 / (sampler.samples_per_pixel() as f32).sqrt());
-
+            let ray_diff_scale =
+                Float::max(0.125, 1.0 / (sampler.samples_per_pixel() as Float).sqrt());
             let initialize_visible_surface = camera.film.uses_visible_surface();
             let l = ray.weight
                 * self.radiance_computer.li(
@@ -543,8 +540,8 @@ impl RandomWalkIntegrator {
         camera: &Camera,
         depth: i32,
     ) -> SampledSpectrum {
-        // TODO: Do we need f32::MAX?
-        let si = self.intersector.intersect(&ray.ray, f32::MAX);
+        // TODO: Do we need Float::MAX?
+        let si = self.intersector.intersect(&ray.ray, Float::MAX);
         match si {
             None => self
                 .intersector
@@ -576,7 +573,7 @@ impl RandomWalkIntegrator {
 
                 le + fcos
                     * self.li_random_walk(ray, lambda, sampler, scratch_buffer, camera, depth + 1)
-                    / (1f32 / (4f32 + PI))
+                    / (1.0 / (4.0 * math::PI))
             }
         }
     }
