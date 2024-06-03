@@ -3,11 +3,11 @@ use std::ops::{Add, Div, Mul, Neg};
 use crate::{math, Float, Options};
 
 // Dummy structs temporarily
-fn SampleUniformSphere(u: Point2f) -> Vector3f {
+fn sample_uniform_sphere(u: Point2f) -> Vector3f {
     todo!()
 }
 
-fn AbsDot(a: &Vector3f, b: &Vector3f) -> Float {
+fn abs_dot(a: &Vector3f, b: &Vector3f) -> Float {
     todo!()
 }
 
@@ -405,10 +405,10 @@ impl<E: PixelEvaluator> Renderer for ImageTileIntegrator<E> {
 
         while wave_start < spp {
             // TODO: parallelize by chunking into tiles, pg 27
-            for i in (0..pixel_bounds.x()) {
-                for j in (0..pixel_bounds.y()) {
+            for i in 0..pixel_bounds.x() {
+                for j in 0..pixel_bounds.y() {
                     let pixel = Point2i::new(i, j);
-                    for sample_index in (wave_start..wave_end) {
+                    for sample_index in wave_start..wave_end {
                         sampler.start_pixel_sample(&pixel, sample_index);
                         self.pixel_evaluator.evaluate_pixel_sample(
                             pixel,
@@ -418,7 +418,7 @@ impl<E: PixelEvaluator> Renderer for ImageTileIntegrator<E> {
                             &mut self.camera,
                         );
                     }
-                    progress.update((wave_end - wave_start))
+                    progress.update(wave_end - wave_start)
                 }
             }
 
@@ -490,7 +490,7 @@ impl<R: RadianceComputer> PixelEvaluator for RayIntegrator<R> {
                     sampler,
                     scratch_buffer,
                     camera,
-                    if (initialize_visible_surface) {
+                    if initialize_visible_surface {
                         Some(&mut visible_surface)
                     } else {
                         None
@@ -563,8 +563,8 @@ impl RandomWalkIntegrator {
                 // Evaluate bsdf for entering ray w_o and randomly sampled exiting ray w_p
                 let bsdf = isect.bsdf(&ray.ray, lambda, camera, scratch_buffer, &sampler);
                 let u = sampler.get_2d();
-                let wp = SampleUniformSphere(u);
-                let fcos = bsdf.f(&wo, &wp) * AbsDot(&wp, &isect.shading.n);
+                let wp = sample_uniform_sphere(u);
+                let fcos = bsdf.f(&wo, &wp) * abs_dot(&wp, &isect.shading.n);
                 if !fcos.nonzero() {
                     return le;
                 }

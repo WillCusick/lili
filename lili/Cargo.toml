@@ -7,3 +7,4 @@ edition = "2021"
 f64 = []
 
 [dependencies]
+fast_polynomial = "0.1.0"
