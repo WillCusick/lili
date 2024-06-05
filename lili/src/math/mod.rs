@@ -1,4 +1,4 @@
-mod sampling;
+pub mod sampling;
 
 mod float;
 use std::ops::Mul;

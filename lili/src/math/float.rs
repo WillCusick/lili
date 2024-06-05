@@ -102,13 +102,15 @@ pub fn next_float_down(mut v: Float) -> Float {
 }
 
 #[cfg(not(f64))]
-/// The largest representable value less than 1.0
-/// f32::from_bits in const context is not yet stable (https://github.com/rust-lang/rust/issues/72447)
-/// However, transmute is stable in const context, so we use that instead
+/// The largest representable value less than 1.0.
+///
+/// f32::from_bits in const context is not yet stable: <https://github.com/rust-lang/rust/issues/72447>
+/// However, transmute is stable in const context, so we use that instead.
 pub const ONE_MINUS_EPSILON: Float = unsafe { std::mem::transmute(0x3f7fffffu32) };
 
 #[cfg(f64)]
 /// The largest representable value less than 1.0
+///
 /// f32::from_bits in const context is not yet stable (https://github.com/rust-lang/rust/issues/72447)
 /// However, transmute is stable in const context, so we use that instead
 pub const ONE_MINUS_EPSILON: Float = unsafe { std::mem::transmute(0x3fefffffffffffffu64) };

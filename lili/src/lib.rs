@@ -1,6 +1,6 @@
 pub mod cpu;
 
-mod math;
+pub mod math;
 type Float = math::Float;
 
 pub mod scene;

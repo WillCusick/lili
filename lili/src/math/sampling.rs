@@ -1,9 +1,22 @@
+//! This module provides functions and structures for various sampling techniques in computer graphics.
+
 use super::{float::lerp, next_float_down, sqr, Float, ONE_MINUS_EPSILON};
 
 /// Computes the balance heuristic for two distributions
 ///
 /// This is a heuristic to weight the importance of distributions for
 /// multiple importance sampling.
+///
+/// # Arguments
+///
+/// * `nf` - The number of samples from the first distribution
+/// * `f_pdf` - The probability density function of the first distribution
+/// * `ng` - The number of samples from the second distribution
+/// * `g_pdf` - The probability density function of the second distribution
+///
+/// # Returns
+///
+/// The balance heuristic value
 pub fn balance_heuristic(nf: u32, f_pdf: f32, ng: u32, g_pdf: f32) -> f32 {
     ((nf as f32) * f_pdf) / ((nf as f32) * f_pdf + (ng as f32) * g_pdf)
 }
@@ -12,6 +25,19 @@ pub fn balance_heuristic(nf: u32, f_pdf: f32, ng: u32, g_pdf: f32) -> f32 {
 ///
 /// This is a heuristic to weight the importance of distributions for
 /// multiple importance sampling.
+///
+/// # Arguments
+///
+/// * `nf` - The number of samples from the first distribution
+/// * `f_pdf` - The probability density function of the first distribution
+/// * `ng` - The number of samples from the second distribution
+/// * `g_pdf` - The probability density function of the second distribution
+///
+/// # Returns
+///
+/// The power heuristic value
+///
+/// # Remarks
 ///
 /// Beta is chosen as 2
 pub fn power_heuristic(nf: u32, f_pdf: f32, ng: u32, g_pdf: f32) -> f32 {
@@ -29,6 +55,17 @@ pub struct DiscreteSample {
 }
 
 impl DiscreteSample {
+    /// Creates a `DiscreteSample` from a list of weights and a random value `u`
+    ///
+    /// # Arguments
+    ///
+    /// * `weights` - The list of weights for each sample
+    /// * `u` - The random value used for sampling
+    ///
+    /// # Returns
+    ///
+    /// A `DiscreteSample` object containing the sampled index, the probability mass function (pmf),
+    /// and the remapped random value `u`
     pub fn sample_from_weights(weights: &[Float], u: Float) -> Self {
         if weights.is_empty() {
             return Self {
@@ -72,10 +109,58 @@ impl DiscreteSample {
     }
 }
 
+/// Computes the probability density function (pdf) for a linear distribution
+///
+/// # Arguments
+///
+/// * `x` - The value to compute the pdf for
+/// * `a` - The start of the linear distribution
+/// * `b` - The end of the linear distribution
+///
+/// # Returns
+///
+/// The value of the pdf at `x`
 pub fn linear_pdf(x: Float, a: Float, b: Float) -> Float {
     if x < 0.0 || x > 1.0 {
         0.0
     } else {
         2.0 * lerp(x, a, b) / (a + b)
     }
+}
+
+/// Samples a value from a linear distribution
+///
+/// # Arguments
+///
+/// * `u` - The random value used for sampling
+/// * `a` - The start of the linear distribution
+/// * `b` - The end of the linear distribution
+///
+/// # Returns
+///
+/// The sampled value
+pub fn sample_linear(u: Float, a: Float, b: Float) -> Float {
+    if u == 0.0 && a == 0.0 {
+        0.0
+    } else {
+        let x = u * (a + b) / (a + lerp(u, sqr(a), sqr(b)).sqrt());
+
+        // Bound x to [0, 1) in the case of round off errors
+        x.min(ONE_MINUS_EPSILON)
+    }
+}
+
+/// Inverts a sample from a linear distribution
+///
+/// # Arguments
+///
+/// * `x` - The sampled value
+/// * `a` - The start of the linear distribution
+/// * `b` - The end of the linear distribution
+///
+/// # Returns
+///
+/// The inverted sample value, which is the random sample `xi` that generates the value x
+pub fn invert_linear_sample(x: Float, a: Float, b: Float) -> Float {
+    x * (a * (2.0 - x) + b * x) / (a + b)
 }
