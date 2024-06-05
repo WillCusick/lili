@@ -35,6 +35,11 @@ pub fn smooth_step(x: Float, a: Float, b: Float) -> Float {
 }
 
 #[inline(always)]
+pub fn lerp(t: Float, a: Float, b: Float) -> Float {
+    a * (1.0 - t) + b * t
+}
+
+#[inline(always)]
 pub fn safe_sqrt(x: Float) -> Float {
     x.max(0.0).sqrt()
 }
@@ -57,3 +62,53 @@ pub fn safe_asin(x: Float) -> Float {
 pub fn safe_acos(x: Float) -> Float {
     x.clamp(-1.0, 1.0).acos()
 }
+
+pub fn next_float_up(mut v: Float) -> Float {
+    if v.is_infinite() && v > 0.0 {
+        return v;
+    }
+
+    if v == -0.0 {
+        v = 0.0;
+    }
+
+    let mut bits = v.to_bits();
+    if v >= 0.0 {
+        bits += 1;
+    } else {
+        bits -= 1;
+    }
+
+    Float::from_bits(bits)
+}
+
+pub fn next_float_down(mut v: Float) -> Float {
+    if v.is_infinite() && v < 0.0 {
+        return v;
+    }
+
+    if v == 0.0 {
+        v = -0.0;
+    }
+
+    let mut bits = v.to_bits();
+    if v > 0.0 {
+        bits -= 1;
+    } else {
+        bits += 1;
+    }
+
+    Float::from_bits(bits)
+}
+
+#[cfg(not(f64))]
+/// The largest representable value less than 1.0
+/// f32::from_bits in const context is not yet stable (https://github.com/rust-lang/rust/issues/72447)
+/// However, transmute is stable in const context, so we use that instead
+pub const ONE_MINUS_EPSILON: Float = unsafe { std::mem::transmute(0x3f7fffffu32) };
+
+#[cfg(f64)]
+/// The largest representable value less than 1.0
+/// f32::from_bits in const context is not yet stable (https://github.com/rust-lang/rust/issues/72447)
+/// However, transmute is stable in const context, so we use that instead
+pub const ONE_MINUS_EPSILON: Float = unsafe { std::mem::transmute(0x3fefffffffffffffu64) };
