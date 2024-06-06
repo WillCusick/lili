@@ -1,6 +1,6 @@
 use std::ops::{Add, Div, Mul, Neg};
 
-use crate::{math, Float, Options};
+use crate::{math::FloatExt, Float, Options};
 
 // Dummy structs temporarily
 fn sample_uniform_sphere(u: Point2f) -> Vector3f {
@@ -573,7 +573,7 @@ impl RandomWalkIntegrator {
 
                 le + fcos
                     * self.li_random_walk(ray, lambda, sampler, scratch_buffer, camera, depth + 1)
-                    / (1.0 / (4.0 * math::PI))
+                    / (1.0 / (4.0 * Float::PI))
             }
         }
     }

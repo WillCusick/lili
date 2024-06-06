@@ -1,6 +1,6 @@
 //! This module provides functions and structures for various sampling techniques in computer graphics.
 
-use super::{float::lerp, next_float_down, sqr, Float, ONE_MINUS_EPSILON};
+use super::{sqr, Float, FloatExt};
 
 /// Computes the balance heuristic for two distributions
 ///
@@ -82,7 +82,7 @@ impl DiscreteSample {
         // When that happens, bump down up to the next lowest fp so that
         // the follow code can assume up < sumWeights
         let up = if up == sum_weights {
-            next_float_down(up)
+            up.next_float_down()
         } else {
             up
         };
@@ -95,7 +95,7 @@ impl DiscreteSample {
                 return Self {
                     sample: i,
                     pmf: *weight / sum_weights,
-                    u_remapped: ((up - sum) / *weight).min(ONE_MINUS_EPSILON),
+                    u_remapped: ((up - sum) / *weight).min(Float::ONE_MINUS_EPSILON),
                 };
             }
             i += 1;
@@ -124,7 +124,7 @@ pub fn linear_pdf(x: Float, a: Float, b: Float) -> Float {
     if x < 0.0 || x > 1.0 {
         0.0
     } else {
-        2.0 * lerp(x, a, b) / (a + b)
+        2.0 * x.lerp(a, b) / (a + b)
     }
 }
 
@@ -143,10 +143,10 @@ pub fn sample_linear(u: Float, a: Float, b: Float) -> Float {
     if u == 0.0 && a == 0.0 {
         0.0
     } else {
-        let x = u * (a + b) / (a + lerp(u, sqr(a), sqr(b)).sqrt());
+        let x = u * (a + b) / (a + u.lerp(sqr(a), sqr(b)).sqrt());
 
         // Bound x to [0, 1) in the case of round off errors
-        x.min(ONE_MINUS_EPSILON)
+        x.min(Float::ONE_MINUS_EPSILON)
     }
 }
 

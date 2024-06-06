@@ -1,8 +1,8 @@
+use std::ops::Mul;
+
 pub mod sampling;
 
 mod float;
-use std::ops::Mul;
-
 pub use float::*;
 
 mod primes;
