@@ -1,6 +1,6 @@
 //! This module provides functions and structures for various sampling techniques in computer graphics.
 
-use super::{sqr, Float, FloatExt};
+use super::{sqr, tuples::Point2f, Float, FloatExt};
 
 /// Computes the balance heuristic for two distributions
 ///
@@ -163,4 +163,45 @@ pub fn sample_linear(u: Float, a: Float, b: Float) -> Float {
 /// The inverted sample value, which is the random sample `xi` that generates the value x
 pub fn invert_linear_sample(x: Float, a: Float, b: Float) -> Float {
     x * (a * (2.0 - x) + b * x) / (a + b)
+}
+
+/// Computes the probability density function (pdf) for the bilinear interpolation
+///
+/// # Arguments
+///
+/// * `p` - The point to compute the pdf for
+/// * `w` - The weights for the four corners of the bilinear interpolation
+///
+/// # Returns
+///
+/// The value of the pdf at `p`
+pub fn bilinear_pdf(p: Point2f, w: &[Float; 4]) -> Float {
+    if p.x < 0.0 || p.x > 1.0 || p.y < 0.0 || p.y > 1.0 {
+        0.0
+    } else if w.iter().sum::<Float>() == 0.0 {
+        1.0
+    } else {
+        4.0 * ((1.0 - p.x) * (1.0 - p.y) * w[0]
+            + p.x * (1.0 - p.y) * w[1]
+            + (1.0 - p.x) * p.y * w[2]
+            + p.x * p.y * w[3])
+            / (w.iter().sum::<Float>())
+    }
+}
+
+pub fn sample_bilinear(u: Point2f, w: &[Float; 4]) -> Point2f {
+    // Samples y from the bilinear marginal distribution
+    let y = sample_linear(u.y, w[0] + w[1], w[2] + w[3]);
+    Point2f::new(
+        // Samples x from the bilinear conditional distribution
+        sample_linear(u.x, y.lerp(w[0], w[2]), y.lerp(w[1], w[3])),
+        y,
+    )
+}
+
+pub fn invert_bilinear_sample(p: Point2f, w: &[Float; 4]) -> Point2f {
+    Point2f::new(
+        invert_linear_sample(p.x, p.y.lerp(w[0], w[2]), p.y.lerp(w[1], w[3])),
+        invert_linear_sample(p.y, w[0] + w[1], w[2] + w[3]),
+    )
 }
