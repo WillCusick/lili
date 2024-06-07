@@ -32,7 +32,7 @@ pub struct Point2<T> {
 }
 
 impl<T> Point2<T> {
-    fn new(x: T, y: T) -> Self {
+    pub fn new(x: T, y: T) -> Self {
         Self { x, y }
     }
 }
@@ -44,7 +44,7 @@ pub struct Point3<T> {
 }
 
 impl<T> Point3<T> {
-    fn new(x: T, y: T, z: T) -> Self {
+    pub fn new(x: T, y: T, z: T) -> Self {
         Self { x, y, z }
     }
 }
@@ -55,7 +55,7 @@ pub struct Vector2<T> {
 }
 
 impl<T> Vector2<T> {
-    fn new(x: T, y: T) -> Self {
+    pub fn new(x: T, y: T) -> Self {
         Self { x, y }
     }
 }
@@ -67,7 +67,7 @@ pub struct Vector3<T> {
 }
 
 impl<T> Vector3<T> {
-    fn new(x: T, y: T, z: T) -> Self {
+    pub fn new(x: T, y: T, z: T) -> Self {
         Self { x, y, z }
     }
 }
@@ -78,7 +78,7 @@ pub struct Normal2<T> {
 }
 
 impl<T> Normal2<T> {
-    fn new(x: T, y: T) -> Self {
+    pub fn new(x: T, y: T) -> Self {
         Self { x, y }
     }
 }
@@ -90,7 +90,7 @@ pub struct Normal3<T> {
 }
 
 impl<T> Normal3<T> {
-    fn new(x: T, y: T, z: T) -> Self {
+    pub fn new(x: T, y: T, z: T) -> Self {
         Self { x, y, z }
     }
 }
