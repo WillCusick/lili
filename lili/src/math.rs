@@ -12,6 +12,10 @@ pub mod tuples;
 
 mod num_traits;
 
+pub mod length;
+
+pub mod normalize;
+
 pub fn sqr<T>(v: T) -> T
 where
     T: Mul<Output = T> + Copy,
