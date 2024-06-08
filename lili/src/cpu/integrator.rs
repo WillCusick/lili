@@ -1,6 +1,12 @@
 use std::ops::{Add, Div, Mul, Neg};
 
-use crate::{math::FloatExt, Float, Options};
+use crate::{
+    math::{
+        tuples::{Point2f, Point2i, Vector3f},
+        FloatExt,
+    },
+    Float, Options,
+};
 
 // Dummy structs temporarily
 fn sample_uniform_sphere(u: Point2f) -> Vector3f {
@@ -106,26 +112,6 @@ struct Ray {
 }
 
 #[derive(Clone, Copy)]
-struct Vector3f {}
-
-impl Neg for Vector3f {
-    type Output = Vector3f;
-
-    fn neg(self) -> Self::Output {
-        todo!()
-    }
-}
-
-#[derive(Clone, Copy)]
-struct Point2i {}
-
-impl Point2i {
-    fn new(x: i32, y: i32) -> Self {
-        todo!()
-    }
-}
-
-#[derive(Clone, Copy)]
 struct Sampler {}
 
 impl Sampler {
@@ -145,9 +131,6 @@ impl Sampler {
         todo!()
     }
 }
-
-#[derive(Clone, Copy)]
-struct Point2f {}
 
 #[derive(Default)]
 struct ScratchBuffer {}
@@ -411,7 +394,7 @@ impl<E: PixelEvaluator> Renderer for ImageTileIntegrator<E> {
                     for sample_index in wave_start..wave_end {
                         sampler.start_pixel_sample(&pixel, sample_index);
                         self.pixel_evaluator.evaluate_pixel_sample(
-                            pixel,
+                            pixel.clone(),
                             sample_index,
                             sampler,
                             &scratch_buffer,
@@ -472,7 +455,7 @@ impl<R: RadianceComputer> PixelEvaluator for RayIntegrator<R> {
         let lambda = camera.film.sample_wavelengths(lu);
 
         let filter = camera.film.filter();
-        let camera_sample = CameraSample::new(&sampler, pixel, filter);
+        let camera_sample = CameraSample::new(&sampler, pixel.clone(), filter);
 
         let mut camera_ray = camera.generate_ray_differential(camera_sample, &lambda);
 
@@ -552,7 +535,7 @@ impl RandomWalkIntegrator {
                 }),
             Some(isect) => {
                 // Le(p, w_o)
-                let wo = -ray.ray.d;
+                let wo = -ray.ray.d.clone();
                 let le = isect.le(&wo, lambda);
 
                 // Terminate at max recursion
