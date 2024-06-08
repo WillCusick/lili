@@ -1,5 +1,7 @@
 //! Provides various geometric tuple types
 
+use std::ops::{Index, IndexMut};
+
 use super::{
     num_traits::{Abs, Ceil, Floor, IsNan, Max, Min},
     Float,
@@ -329,10 +331,80 @@ macro_rules! tuple3_impl {
     };
 }
 
+macro_rules! index_impl2 {
+    ($i:ident) => {
+        impl<T> Index<usize> for $i<T>
+        where
+            T: TupleElement,
+        {
+            type Output = T;
+
+            fn index(&self, index: usize) -> &Self::Output {
+                match index {
+                    0 => &self.x,
+                    _ => &self.y,
+                }
+            }
+        }
+    };
+}
+
+macro_rules! index_impl3 {
+    ($i:ident) => {
+        impl<T> Index<usize> for $i<T>
+        where
+            T: TupleElement,
+        {
+            type Output = T;
+
+            fn index(&self, index: usize) -> &Self::Output {
+                match index {
+                    0 => &self.x,
+                    1 => &self.y,
+                    _ => &self.z,
+                }
+            }
+        }
+    };
+}
+
+macro_rules! index_mut_impl2 {
+    ($i:ident) => {
+        impl<T> IndexMut<usize> for $i<T>
+        where
+            T: TupleElement,
+        {
+            fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+                match index {
+                    0 => &mut self.x,
+                    _ => &mut self.y,
+                }
+            }
+        }
+    };
+}
+
+macro_rules! index_mut_impl3 {
+    ($i:ident) => {
+        impl<T> IndexMut<usize> for $i<T>
+        where
+            T: TupleElement,
+        {
+            fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+                match index {
+                    0 => &mut self.x,
+                    1 => &mut self.y,
+                    _ => &mut self.z,
+                }
+            }
+        }
+    };
+}
+
 // 2-tuples
 
 /// Represents a 2-dimensional point.
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Point2<T> {
     /// The x-coordinate of the point.
     pub x: T,
@@ -353,9 +425,11 @@ where
 
 tuple2_impl!(Point2);
 tuple_impl2!(Point2);
+index_impl2!(Point2);
+index_mut_impl2!(Point2);
 
 /// Represents a 2-dimensional vector.
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Vector2<T> {
     /// The x-coordinate of the vector.
     pub x: T,
@@ -376,9 +450,11 @@ where
 
 tuple2_impl!(Vector2);
 tuple_impl2!(Vector2);
+index_impl2!(Vector2);
+index_mut_impl2!(Vector2);
 
 /// Represents a 2-dimensional normal.
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Normal2<T> {
     /// The x-coordinate of the normal.
     pub x: T,
@@ -399,11 +475,13 @@ where
 
 tuple2_impl!(Normal2);
 tuple_impl2!(Normal2);
+index_impl2!(Normal2);
+index_mut_impl2!(Normal2);
 
 // 3-tuples
 
 /// Represents a 3-dimensional point.
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Point3<T> {
     /// The x-coordinate of the point.
     pub x: T,
@@ -426,9 +504,11 @@ where
 
 tuple3_impl!(Point3);
 tuple_impl3!(Point3);
+index_impl3!(Point3);
+index_mut_impl3!(Point3);
 
 /// Represents a 3-dimensional vector.
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Vector3<T> {
     /// The x-coordinate of the vector.
     pub x: T,
@@ -451,9 +531,11 @@ where
 
 tuple3_impl!(Vector3);
 tuple_impl3!(Vector3);
+index_impl3!(Vector3);
+index_mut_impl3!(Vector3);
 
 /// Represents a 3-dimensional normal.
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Normal3<T> {
     /// The x-coordinate of the normal.
     pub x: T,
@@ -476,6 +558,8 @@ where
 
 tuple3_impl!(Normal3);
 tuple_impl3!(Normal3);
+index_impl3!(Normal3);
+index_mut_impl3!(Normal3);
 
 // Type aliases
 /// A 2-dimensional point with `f32` components.
