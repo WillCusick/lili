@@ -314,7 +314,11 @@ macro_rules! tuple2_impl {
             T: TupleElement,
         {
             fn permute(&self, perm: [usize; 2]) -> Self {
-                todo!()
+                debug_assert!(perm[0] < 2 && perm[1] < 2);
+                Self {
+                    x: self[perm[0]],
+                    y: self[perm[1]],
+                }
             }
         }
     };
@@ -327,7 +331,12 @@ macro_rules! tuple3_impl {
             T: TupleElement,
         {
             fn permute(&self, perm: [usize; 3]) -> Self {
-                todo!()
+                debug_assert!(perm[0] < 3 && perm[1] < 3 && perm[2] < 3);
+                Self {
+                    x: self[perm[0]],
+                    y: self[perm[1]],
+                    z: self[perm[2]],
+                }
             }
         }
     };
@@ -755,4 +764,3 @@ impl_op_ex!(/= |a: &mut Normal2i, b: i32| { a.x /= b; a.y /= b; });
 impl_op_ex!(/= |a: &mut Normal3i, b: i32| { a.x /= b; a.y /= b; a.z /= b; });
 
 // TODO: From traits for Tuple3<T>/Tuple2<T>
-// TODO: permutate method for Tuple3<T>/Tuple2<T>
