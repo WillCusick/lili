@@ -2,6 +2,8 @@
 
 use std::ops::{Index, IndexMut};
 
+use auto_ops::{impl_op_ex, impl_op_ex_commutative};
+
 use super::{
     num_traits::{Abs, Ceil, Floor, IsNan, Max, Min},
     Float,
@@ -588,7 +590,112 @@ pub type Normal2i = Normal2<i32>;
 /// A 3-dimensional normal with `i32` components.
 pub type Normal3i = Normal3<i32>;
 
-// TODO: Index trait for Tuple3<T>/Tuple2<T>
-// TODO: Arithmetic traits for Tuple3<T>/Tuple2<T>
+// Arithmetic operations
+
+// Tuple + Tuple
+impl_op_ex!(+ |a: &Point2f, b: &Point2f| -> Point2f { Point2f::new(a.x + b.x, a.y + b.y) });
+impl_op_ex!(+ |a: &Point3f, b: &Point3f| -> Point3f { Point3f::new(a.x + b.x, a.y + b.y, a.z + b.z) });
+impl_op_ex!(+ |a: &Vector2f, b: &Vector2f| -> Vector2f { Vector2f::new(a.x + b.x, a.y + b.y) });
+impl_op_ex!(+ |a: &Vector3f, b: &Vector3f| -> Vector3f { Vector3f::new(a.x + b.x, a.y + b.y, a.z + b.z) });
+impl_op_ex!(+ |a: &Normal2f, b: &Normal2f| -> Normal2f { Normal2f::new(a.x + b.x, a.y + b.y) });
+impl_op_ex!(+ |a: &Normal3f, b: &Normal3f| -> Normal3f { Normal3f::new(a.x + b.x, a.y + b.y, a.z + b.z) });
+impl_op_ex!(+ |a: &Point2i, b: &Point2i| -> Point2i { Point2i::new(a.x + b.x, a.y + b.y) });
+impl_op_ex!(+ |a: &Point3i, b: &Point3i| -> Point3i { Point3i::new(a.x + b.x, a.y + b.y, a.z + b.z) });
+impl_op_ex!(+ |a: &Vector2i, b: &Vector2i| -> Vector2i { Vector2i::new(a.x + b.x, a.y + b.y) });
+impl_op_ex!(+ |a: &Vector3i, b: &Vector3i| -> Vector3i { Vector3i::new(a.x + b.x, a.y + b.y, a.z + b.z) });
+impl_op_ex!(+ |a: &Normal2i, b: &Normal2i| -> Normal2i { Normal2i::new(a.x + b.x, a.y + b.y) });
+impl_op_ex!(+ |a: &Normal3i, b: &Normal3i| -> Normal3i { Normal3i::new(a.x + b.x, a.y + b.y, a.z + b.z) });
+
+// Tuple - Tuple
+impl_op_ex!(-|a: &Point2f, b: &Point2f| -> Point2f { Point2f::new(a.x - b.x, a.y - b.y) });
+impl_op_ex!(-|a: &Point3f, b: &Point3f| -> Point3f {
+    Point3f::new(a.x - b.x, a.y - b.y, a.z - b.z)
+});
+impl_op_ex!(-|a: &Vector2f, b: &Vector2f| -> Vector2f { Vector2f::new(a.x - b.x, a.y - b.y) });
+impl_op_ex!(-|a: &Vector3f, b: &Vector3f| -> Vector3f {
+    Vector3f::new(a.x - b.x, a.y - b.y, a.z - b.z)
+});
+impl_op_ex!(-|a: &Normal2f, b: &Normal2f| -> Normal2f { Normal2f::new(a.x - b.x, a.y - b.y) });
+impl_op_ex!(-|a: &Normal3f, b: &Normal3f| -> Normal3f {
+    Normal3f::new(a.x - b.x, a.y - b.y, a.z - b.z)
+});
+impl_op_ex!(-|a: &Point2i, b: &Point2i| -> Point2i { Point2i::new(a.x - b.x, a.y - b.y) });
+impl_op_ex!(-|a: &Point3i, b: &Point3i| -> Point3i {
+    Point3i::new(a.x - b.x, a.y - b.y, a.z - b.z)
+});
+impl_op_ex!(-|a: &Vector2i, b: &Vector2i| -> Vector2i { Vector2i::new(a.x - b.x, a.y - b.y) });
+impl_op_ex!(-|a: &Vector3i, b: &Vector3i| -> Vector3i {
+    Vector3i::new(a.x - b.x, a.y - b.y, a.z - b.z)
+});
+impl_op_ex!(-|a: &Normal2i, b: &Normal2i| -> Normal2i { Normal2i::new(a.x - b.x, a.y - b.y) });
+impl_op_ex!(-|a: &Normal3i, b: &Normal3i| -> Normal3i {
+    Normal3i::new(a.x - b.x, a.y - b.y, a.z - b.z)
+});
+
+// Tuple * Scalar
+impl_op_ex_commutative!(*|a: &Point2f, b: Float| -> Point2f { Point2f::new(a.x * b, a.y * b) });
+impl_op_ex_commutative!(*|a: &Point3f, b: Float| -> Point3f {
+    Point3f::new(a.x * b, a.y * b, a.z * b)
+});
+impl_op_ex_commutative!(*|a: &Vector2f, b: Float| -> Vector2f { Vector2f::new(a.x * b, a.y * b) });
+impl_op_ex_commutative!(*|a: &Vector3f, b: Float| -> Vector3f {
+    Vector3f::new(a.x * b, a.y * b, a.z * b)
+});
+impl_op_ex_commutative!(*|a: &Normal2f, b: Float| -> Normal2f { Normal2f::new(a.x * b, a.y * b) });
+impl_op_ex_commutative!(*|a: &Normal3f, b: Float| -> Normal3f {
+    Normal3f::new(a.x * b, a.y * b, a.z * b)
+});
+impl_op_ex_commutative!(*|a: &Point2i, b: i32| -> Point2i { Point2i::new(a.x * b, a.y * b) });
+impl_op_ex_commutative!(*|a: &Point3i, b: i32| -> Point3i {
+    Point3i::new(a.x * b, a.y * b, a.z * b)
+});
+impl_op_ex_commutative!(*|a: &Vector2i, b: i32| -> Vector2i { Vector2i::new(a.x * b, a.y * b) });
+impl_op_ex_commutative!(*|a: &Vector3i, b: i32| -> Vector3i {
+    Vector3i::new(a.x * b, a.y * b, a.z * b)
+});
+impl_op_ex_commutative!(*|a: &Normal2i, b: i32| -> Normal2i { Normal2i::new(a.x * b, a.y * b) });
+impl_op_ex_commutative!(*|a: &Normal3i, b: i32| -> Normal3i {
+    Normal3i::new(a.x * b, a.y * b, a.z * b)
+});
+
+// Tuple / Scalar
+impl_op_ex_commutative!(/|a: &Point2f, b: Float| -> Point2f { Point2f::new(a.x / b, a.y / b) });
+impl_op_ex_commutative!(/|a: &Point3f, b: Float| -> Point3f {
+    Point3f::new(a.x / b, a.y / b, a.z / b)
+});
+impl_op_ex_commutative!(/|a: &Vector2f, b: Float| -> Vector2f { Vector2f::new(a.x / b, a.y / b) });
+impl_op_ex_commutative!(/|a: &Vector3f, b: Float| -> Vector3f {
+    Vector3f::new(a.x / b, a.y / b, a.z / b)
+});
+impl_op_ex_commutative!(/|a: &Normal2f, b: Float| -> Normal2f { Normal2f::new(a.x / b, a.y / b) });
+impl_op_ex_commutative!(/|a: &Normal3f, b: Float| -> Normal3f {
+    Normal3f::new(a.x / b, a.y / b, a.z / b)
+});
+impl_op_ex_commutative!(/|a: &Point2i, b: i32| -> Point2i { Point2i::new(a.x / b, a.y / b) });
+impl_op_ex_commutative!(/|a: &Point3i, b: i32| -> Point3i {
+    Point3i::new(a.x / b, a.y / b, a.z / b)
+});
+impl_op_ex_commutative!(/|a: &Vector2i, b: i32| -> Vector2i { Vector2i::new(a.x / b, a.y / b) });
+impl_op_ex_commutative!(/|a: &Vector3i, b: i32| -> Vector3i {
+    Vector3i::new(a.x / b, a.y / b, a.z / b)
+});
+impl_op_ex_commutative!(/|a: &Normal2i, b: i32| -> Normal2i { Normal2i::new(a.x / b, a.y / b) });
+impl_op_ex_commutative!(/|a: &Normal3i, b: i32| -> Normal3i {
+    Normal3i::new(a.x / b, a.y / b, a.z / b)
+});
+
+impl_op_ex!(-|a: &Point2f| -> Point2f { Point2f::new(-a.x, -a.y) });
+impl_op_ex!(-|a: &Point3f| -> Point3f { Point3f::new(-a.x, -a.y, -a.z) });
+impl_op_ex!(-|a: &Vector2f| -> Vector2f { Vector2f::new(-a.x, -a.y) });
+impl_op_ex!(-|a: &Vector3f| -> Vector3f { Vector3f::new(-a.x, -a.y, -a.z) });
+impl_op_ex!(-|a: &Normal2f| -> Normal2f { Normal2f::new(-a.x, -a.y) });
+impl_op_ex!(-|a: &Normal3f| -> Normal3f { Normal3f::new(-a.x, -a.y, -a.z) });
+impl_op_ex!(-|a: &Point2i| -> Point2i { Point2i::new(-a.x, -a.y) });
+impl_op_ex!(-|a: &Point3i| -> Point3i { Point3i::new(-a.x, -a.y, -a.z) });
+impl_op_ex!(-|a: &Vector2i| -> Vector2i { Vector2i::new(-a.x, -a.y) });
+impl_op_ex!(-|a: &Vector3i| -> Vector3i { Vector3i::new(-a.x, -a.y, -a.z) });
+impl_op_ex!(-|a: &Normal2i| -> Normal2i { Normal2i::new(-a.x, -a.y) });
+impl_op_ex!(-|a: &Normal3i| -> Normal3i { Normal3i::new(-a.x, -a.y, -a.z) });
+
 // TODO: From traits for Tuple3<T>/Tuple2<T>
 // TODO: permutate method for Tuple3<T>/Tuple2<T>
