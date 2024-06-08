@@ -8,7 +8,7 @@ pub use float::*;
 mod primes;
 pub use primes::next_prime;
 
-mod tuples;
+pub mod tuples;
 
 mod num_traits;
 
