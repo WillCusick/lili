@@ -684,6 +684,7 @@ impl_op_ex_commutative!(/|a: &Normal3i, b: i32| -> Normal3i {
     Normal3i::new(a.x / b, a.y / b, a.z / b)
 });
 
+// - Tuple
 impl_op_ex!(-|a: &Point2f| -> Point2f { Point2f::new(-a.x, -a.y) });
 impl_op_ex!(-|a: &Point3f| -> Point3f { Point3f::new(-a.x, -a.y, -a.z) });
 impl_op_ex!(-|a: &Vector2f| -> Vector2f { Vector2f::new(-a.x, -a.y) });
@@ -696,6 +697,62 @@ impl_op_ex!(-|a: &Vector2i| -> Vector2i { Vector2i::new(-a.x, -a.y) });
 impl_op_ex!(-|a: &Vector3i| -> Vector3i { Vector3i::new(-a.x, -a.y, -a.z) });
 impl_op_ex!(-|a: &Normal2i| -> Normal2i { Normal2i::new(-a.x, -a.y) });
 impl_op_ex!(-|a: &Normal3i| -> Normal3i { Normal3i::new(-a.x, -a.y, -a.z) });
+
+// Tuple += Tuple
+impl_op_ex!(+= |a: &mut Point2f, b: &Point2f| { a.x += b.x; a.y += b.y; });
+impl_op_ex!(+= |a: &mut Point3f, b: &Point3f| { a.x += b.x; a.y += b.y; a.z += b.z; });
+impl_op_ex!(+= |a: &mut Vector2f, b: &Vector2f| { a.x += b.x; a.y += b.y; });
+impl_op_ex!(+= |a: &mut Vector3f, b: &Vector3f| { a.x += b.x; a.y += b.y; a.z += b.z; });
+impl_op_ex!(+= |a: &mut Normal2f, b: &Normal2f| { a.x += b.x; a.y += b.y; });
+impl_op_ex!(+= |a: &mut Normal3f, b: &Normal3f| { a.x += b.x; a.y += b.y; a.z += b.z; });
+impl_op_ex!(+= |a: &mut Point2i, b: &Point2i| { a.x += b.x; a.y += b.y; });
+impl_op_ex!(+= |a: &mut Point3i, b: &Point3i| { a.x += b.x; a.y += b.y; a.z += b.z; });
+impl_op_ex!(+= |a: &mut Vector2i, b: &Vector2i| { a.x += b.x; a.y += b.y; });
+impl_op_ex!(+= |a: &mut Vector3i, b: &Vector3i| { a.x += b.x; a.y += b.y; a.z += b.z; });
+impl_op_ex!(+= |a: &mut Normal2i, b: &Normal2i| { a.x += b.x; a.y += b.y; });
+impl_op_ex!(+= |a: &mut Normal3i, b: &Normal3i| { a.x += b.x; a.y += b.y; a.z += b.z; });
+
+// Tuple -= Tuple
+impl_op_ex!(-= |a: &mut Point2f, b: &Point2f| { a.x -= b.x; a.y -= b.y; });
+impl_op_ex!(-= |a: &mut Point3f, b: &Point3f| { a.x -= b.x; a.y -= b.y; a.z -= b.z; });
+impl_op_ex!(-= |a: &mut Vector2f, b: &Vector2f| { a.x -= b.x; a.y -= b.y; });
+impl_op_ex!(-= |a: &mut Vector3f, b: &Vector3f| { a.x -= b.x; a.y -= b.y; a.z -= b.z; });
+impl_op_ex!(-= |a: &mut Normal2f, b: &Normal2f| { a.x -= b.x; a.y -= b.y; });
+impl_op_ex!(-= |a: &mut Normal3f, b: &Normal3f| { a.x -= b.x; a.y -= b.y; a.z -= b.z; });
+impl_op_ex!(-= |a: &mut Point2i, b: &Point2i| { a.x -= b.x; a.y -= b.y; });
+impl_op_ex!(-= |a: &mut Point3i, b: &Point3i| { a.x -= b.x; a.y -= b.y; a.z -= b.z; });
+impl_op_ex!(-= |a: &mut Vector2i, b: &Vector2i| { a.x -= b.x; a.y -= b.y; });
+impl_op_ex!(-= |a: &mut Vector3i, b: &Vector3i| { a.x -= b.x; a.y -= b.y; a.z -= b.z; });
+impl_op_ex!(-= |a: &mut Normal2i, b: &Normal2i| { a.x -= b.x; a.y -= b.y; });
+impl_op_ex!(-= |a: &mut Normal3i, b: &Normal3i| { a.x -= b.x; a.y -= b.y; a.z -= b.z; });
+
+// Tuple *= Scalar
+impl_op_ex!(*= |a: &mut Point2f, b: Float| { a.x *= b; a.y *= b; });
+impl_op_ex!(*= |a: &mut Point3f, b: Float| { a.x *= b; a.y *= b; a.z *= b; });
+impl_op_ex!(*= |a: &mut Vector2f, b: Float| { a.x *= b; a.y *= b; });
+impl_op_ex!(*= |a: &mut Vector3f, b: Float| { a.x *= b; a.y *= b; a.z *= b; });
+impl_op_ex!(*= |a: &mut Normal2f, b: Float| { a.x *= b; a.y *= b; });
+impl_op_ex!(*= |a: &mut Normal3f, b: Float| { a.x *= b; a.y *= b; a.z *= b; });
+impl_op_ex!(*= |a: &mut Point2i, b: i32| { a.x *= b; a.y *= b; });
+impl_op_ex!(*= |a: &mut Point3i, b: i32| { a.x *= b; a.y *= b; a.z *= b; });
+impl_op_ex!(*= |a: &mut Vector2i, b: i32| { a.x *= b; a.y *= b; });
+impl_op_ex!(*= |a: &mut Vector3i, b: i32| { a.x *= b; a.y *= b; a.z *= b; });
+impl_op_ex!(*= |a: &mut Normal2i, b: i32| { a.x *= b; a.y *= b; });
+impl_op_ex!(*= |a: &mut Normal3i, b: i32| { a.x *= b; a.y *= b; a.z *= b; });
+
+// Tuple /= Scalar
+impl_op_ex!(/= |a: &mut Point2f, b: Float| { a.x /= b; a.y /= b; });
+impl_op_ex!(/= |a: &mut Point3f, b: Float| { a.x /= b; a.y /= b; a.z /= b; });
+impl_op_ex!(/= |a: &mut Vector2f, b: Float| { a.x /= b; a.y /= b; });
+impl_op_ex!(/= |a: &mut Vector3f, b: Float| { a.x /= b; a.y /= b; a.z /= b; });
+impl_op_ex!(/= |a: &mut Normal2f, b: Float| { a.x /= b; a.y /= b; });
+impl_op_ex!(/= |a: &mut Normal3f, b: Float| { a.x /= b; a.y /= b; a.z /= b; });
+impl_op_ex!(/= |a: &mut Point2i, b: i32| { a.x /= b; a.y /= b; });
+impl_op_ex!(/= |a: &mut Point3i, b: i32| { a.x /= b; a.y /= b; a.z /= b; });
+impl_op_ex!(/= |a: &mut Vector2i, b: i32| { a.x /= b; a.y /= b; });
+impl_op_ex!(/= |a: &mut Vector3i, b: i32| { a.x /= b; a.y /= b; a.z /= b; });
+impl_op_ex!(/= |a: &mut Normal2i, b: i32| { a.x /= b; a.y /= b; });
+impl_op_ex!(/= |a: &mut Normal3i, b: i32| { a.x /= b; a.y /= b; a.z /= b; });
 
 // TODO: From traits for Tuple3<T>/Tuple2<T>
 // TODO: permutate method for Tuple3<T>/Tuple2<T>
