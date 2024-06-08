@@ -766,7 +766,7 @@ impl_op_ex!(/= |a: &mut Normal3i, b: i32| { a.x /= b; a.y /= b; a.z /= b; });
 // Conversion traits
 
 macro_rules! from_tuple_impl2 {
-    ($from:ident,$to:ident) => {
+    ($from:ty,$to:ty) => {
         impl From<$from> for $to {
             fn from(t: $from) -> Self {
                 Self::new(t.x, t.y)
@@ -776,7 +776,7 @@ macro_rules! from_tuple_impl2 {
 }
 
 macro_rules! from_tuple_impl3 {
-    ($from:ident,$to:ident) => {
+    ($from:ty,$to:ty) => {
         impl From<$from> for $to {
             fn from(t: $from) -> Self {
                 Self::new(t.x, t.y, t.z)
@@ -786,7 +786,7 @@ macro_rules! from_tuple_impl3 {
 }
 
 macro_rules! from_tuple_inner_impl2 {
-    ($from:ident,$to:ident,$ty:ident) => {
+    ($from:ty,$to:ident,$ty:ty) => {
         impl From<$from> for $to {
             fn from(value: $from) -> Self {
                 Self::new(value.x as $ty, value.y as $ty)
@@ -796,7 +796,7 @@ macro_rules! from_tuple_inner_impl2 {
 }
 
 macro_rules! from_tuple_inner_impl3 {
-    ($from:ident,$to:ident,$ty:ident) => {
+    ($from:ty,$to:ty,$ty:ty) => {
         impl From<$from> for $to {
             fn from(value: $from) -> Self {
                 Self::new(value.x as $ty, value.y as $ty, value.z as $ty)
@@ -819,6 +819,19 @@ from_tuple_impl3!(Vector3f, Normal3f);
 from_tuple_impl3!(Normal3f, Point3f);
 from_tuple_impl3!(Normal3f, Vector3f);
 
+from_tuple_impl2!(&Point2f, Vector2f);
+from_tuple_impl2!(&Point2f, Normal2f);
+from_tuple_impl2!(&Vector2f, Point2f);
+from_tuple_impl2!(&Vector2f, Normal2f);
+from_tuple_impl2!(&Normal2f, Point2f);
+from_tuple_impl2!(&Normal2f, Vector2f);
+from_tuple_impl3!(&Point3f, Vector3f);
+from_tuple_impl3!(&Point3f, Normal3f);
+from_tuple_impl3!(&Vector3f, Point3f);
+from_tuple_impl3!(&Vector3f, Normal3f);
+from_tuple_impl3!(&Normal3f, Point3f);
+from_tuple_impl3!(&Normal3f, Vector3f);
+
 // i32 tuple conversions
 from_tuple_impl2!(Point2i, Vector2i);
 from_tuple_impl2!(Point2i, Normal2i);
@@ -833,6 +846,19 @@ from_tuple_impl3!(Vector3i, Normal3i);
 from_tuple_impl3!(Normal3i, Point3i);
 from_tuple_impl3!(Normal3i, Vector3i);
 
+from_tuple_impl2!(&Point2i, Vector2i);
+from_tuple_impl2!(&Point2i, Normal2i);
+from_tuple_impl2!(&Vector2i, Point2i);
+from_tuple_impl2!(&Vector2i, Normal2i);
+from_tuple_impl2!(&Normal2i, Point2i);
+from_tuple_impl2!(&Normal2i, Vector2i);
+from_tuple_impl3!(&Point3i, Vector3i);
+from_tuple_impl3!(&Point3i, Normal3i);
+from_tuple_impl3!(&Vector3i, Point3i);
+from_tuple_impl3!(&Vector3i, Normal3i);
+from_tuple_impl3!(&Normal3i, Point3i);
+from_tuple_impl3!(&Normal3i, Vector3i);
+
 // Float to i32 tuple conversions
 from_tuple_inner_impl2!(Point2f, Point2i, i32);
 from_tuple_inner_impl2!(Vector2f, Vector2i, i32);
@@ -841,6 +867,13 @@ from_tuple_inner_impl3!(Point3f, Point3i, i32);
 from_tuple_inner_impl3!(Vector3f, Vector3i, i32);
 from_tuple_inner_impl3!(Normal3f, Normal3i, i32);
 
+from_tuple_inner_impl2!(&Point2f, Point2i, i32);
+from_tuple_inner_impl2!(&Vector2f, Vector2i, i32);
+from_tuple_inner_impl2!(&Normal2f, Normal2i, i32);
+from_tuple_inner_impl3!(&Point3f, Point3i, i32);
+from_tuple_inner_impl3!(&Vector3f, Vector3i, i32);
+from_tuple_inner_impl3!(&Normal3f, Normal3i, i32);
+
 // i32 to Float tuple conversions
 from_tuple_inner_impl2!(Point2i, Point2f, Float);
 from_tuple_inner_impl2!(Vector2i, Vector2f, Float);
@@ -848,3 +881,10 @@ from_tuple_inner_impl2!(Normal2i, Normal2f, Float);
 from_tuple_inner_impl3!(Point3i, Point3f, Float);
 from_tuple_inner_impl3!(Vector3i, Vector3f, Float);
 from_tuple_inner_impl3!(Normal3i, Normal3f, Float);
+
+from_tuple_inner_impl2!(&Point2i, Point2f, Float);
+from_tuple_inner_impl2!(&Vector2i, Vector2f, Float);
+from_tuple_inner_impl2!(&Normal2i, Normal2f, Float);
+from_tuple_inner_impl3!(&Point3i, Point3f, Float);
+from_tuple_inner_impl3!(&Vector3i, Vector3f, Float);
+from_tuple_inner_impl3!(&Normal3i, Normal3f, Float);
