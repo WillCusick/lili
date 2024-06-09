@@ -185,10 +185,16 @@ impl FloatExt for Float {
     #[cfg(f64)]
     const ONE_MINUS_EPSILON: Float = unsafe { std::mem::transmute(0x3fefffffffffffffu64) };
 
+    #[allow(clippy::excessive_precision)]
     const PI: Float = 3.14159265358979323846;
+    #[allow(clippy::excessive_precision)]
     const INV_PI: Float = 0.31830988618379067154;
+    #[allow(clippy::excessive_precision)]
     const INV_2PI: Float = 0.15915494309189533577;
+    #[allow(clippy::excessive_precision)]
     const INV_4PI: Float = 0.07957747154594766788;
+    #[allow(clippy::excessive_precision)]
     const PI_OVER_2: Float = 1.57079632679489661923;
+    #[allow(clippy::excessive_precision)]
     const PI_OVER_4: Float = 0.78539816339744830961;
 }

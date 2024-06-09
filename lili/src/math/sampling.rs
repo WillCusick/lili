@@ -87,18 +87,16 @@ impl DiscreteSample {
             up
         };
 
-        let mut i = 0;
         let mut sum: Float = 0.0;
-        for weight in weights {
+        for (i, weight) in weights.iter().enumerate() {
             sum += *weight;
             if sum > up {
                 return Self {
-                    sample: i,
+                    sample: i as i32,
                     pmf: *weight / sum_weights,
                     u_remapped: ((up - sum) / *weight).min(Float::ONE_MINUS_EPSILON),
                 };
             }
-            i += 1;
         }
 
         // If we get here, something went wrong
@@ -121,7 +119,7 @@ impl DiscreteSample {
 ///
 /// The value of the pdf at `x`
 pub fn linear_pdf(x: Float, a: Float, b: Float) -> Float {
-    if x < 0.0 || x > 1.0 {
+    if !(0.0..=1.0).contains(&x) {
         0.0
     } else {
         2.0 * x.lerp(a, b) / (a + b)

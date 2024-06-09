@@ -1,4 +1,4 @@
-use std::ops::{Add, Div, Mul, Neg};
+use std::ops::{Add, Div, Mul};
 
 use crate::{
     math::{
@@ -44,7 +44,7 @@ enum Light {
 }
 
 impl Light {
-    fn preprocess(&mut self, bounds: &Bounds3f) -> () {
+    fn preprocess(&mut self, bounds: &Bounds3f) {
         todo!()
     }
 
@@ -64,9 +64,9 @@ enum LightType {
     Infinite,
 }
 
-struct BSDF {}
+struct Bsdf {}
 
-impl BSDF {
+impl Bsdf {
     fn f(&self, wo: &Vector3f, wp: &Vector3f) -> SampledSpectrum {
         todo!()
     }
@@ -93,7 +93,7 @@ impl ShapeIntersection {
         camera: &Camera,
         scratch_buffer: &ScratchBuffer,
         sampler: &Sampler,
-    ) -> BSDF {
+    ) -> Bsdf {
         todo!()
     }
 
@@ -313,7 +313,7 @@ impl AggregateIntersector {
         let infinite_lights = lights
             .iter()
             .filter(|l| l.light_type() == LightType::Infinite)
-            .map(|l| l.clone())
+            .cloned()
             .collect();
 
         Self {
@@ -374,7 +374,7 @@ impl<E: PixelEvaluator> ImageTileIntegrator<E> {
 impl<E: PixelEvaluator> Renderer for ImageTileIntegrator<E> {
     fn render(&mut self, options: Options) {
         // TODO: Thread local these, pg 25
-        let sampler = self.sampler_prototype.clone();
+        let sampler = self.sampler_prototype;
         let scratch_buffer = ScratchBuffer::default();
 
         let pixel_bounds = self.camera.film.pixel_bounds();
