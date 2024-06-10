@@ -1,11 +1,16 @@
+//! Normalization of vectors.
 use super::{
     length::Length,
-    tuples::{Vector2f, Vector2i, Vector3f, Vector3i},
+    vectors::{Vector2f, Vector2i, Vector3f, Vector3i},
 };
 
+/// Trait for normalizing a vector.
 pub trait Normalize {
     type Output;
 
+    /// Normalize the vector.
+    ///
+    /// Returns the normalized vector
     fn normalize(&self) -> Self::Output;
 }
 

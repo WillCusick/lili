@@ -63,6 +63,9 @@ pub const PRIMES: [i32; PRIME_TABLE_SIZE] = [
     7853, 7867, 7873, 7877, 7879, 7883, 7901, 7907, 7919,
 ];
 
+/// Returns the next prime after `n`
+///
+/// Only works for `n < 7919`, (first 1000 primes)
 pub fn next_prime(n: i32) -> i32 {
     // TODO: What to do when n >= 7919
     assert!(n < PRIMES[PRIME_TABLE_SIZE - 1]);

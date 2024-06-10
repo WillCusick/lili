@@ -1,3 +1,5 @@
+//! Floating-point number utilities.
+
 /// The type used for floating-point numbers. It is either `f32` or `f64` depending on the configuration.
 #[cfg(not(f64))]
 pub type Float = f32;

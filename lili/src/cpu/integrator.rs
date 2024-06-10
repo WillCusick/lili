@@ -2,7 +2,8 @@ use std::ops::{Add, Div, Mul};
 
 use crate::{
     math::{
-        tuples::{Point2f, Point2i, Vector3f},
+        points::{Point2f, Point2i},
+        vectors::Vector3f,
         FloatExt,
     },
     Float, Options,

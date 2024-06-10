@@ -1,6 +1,6 @@
 //! This module provides functions and structures for various sampling techniques in computer graphics.
 
-use super::{sqr, tuples::Point2f, Float, FloatExt};
+use super::{points::Point2f, sqr, Float, FloatExt};
 
 /// Computes the balance heuristic for two distributions
 ///
