@@ -94,11 +94,16 @@ pub trait TupleElement:
     + PartialOrd
     + Copy
 {
+    const ZERO: Self;
 }
 
-impl TupleElement for Float {}
+impl TupleElement for Float {
+    const ZERO: Self = 0.0;
+}
 
-impl TupleElement for i32 {}
+impl TupleElement for i32 {
+    const ZERO: Self = 0;
+}
 
 // Tuple macros
 

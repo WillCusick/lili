@@ -88,4 +88,6 @@ dot2_impl_ex!(Vector2i, Vector2i, i32);
 dot3_impl_ex!(Vector3f, Vector3f, Float);
 dot3_impl_ex!(Vector3f, Normal3f, Float);
 dot3_impl_ex!(Normal3f, Vector3f, Float);
+dot3_impl_ex!(Normal3f, Normal3f, Float);
+
 dot3_impl_ex!(Vector3i, Vector3i, i32);

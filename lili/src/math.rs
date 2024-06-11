@@ -26,6 +26,8 @@ pub mod points;
 
 pub mod dot;
 
+pub mod face_forward;
+
 pub fn sqr<T>(v: T) -> T
 where
     T: Mul<Output = T> + Copy,
