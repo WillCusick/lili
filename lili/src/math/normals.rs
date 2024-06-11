@@ -1,10 +1,8 @@
 //! Normal vector types and operations.
 use auto_ops::{impl_op_ex, impl_op_ex_commutative};
 
-use crate::math::tuples::Tuple;
-
 use super::{
-    tuples::{index_impl3, index_mut_impl3, tuple3_impl, tuple_impl3, TupleElement},
+    tuples::{index_impl3, index_mut_impl3, tuple3_impl, tuple_impl3, Tuple, TupleElement},
     Float,
 };
 
@@ -38,6 +36,7 @@ index_mut_impl3!(Normal3);
 // Type aliases
 
 pub type Normal3f = Normal3<Float>;
+
 // Arithmetic operations
 
 // Normal + Normal

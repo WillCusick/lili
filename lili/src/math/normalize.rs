@@ -1,6 +1,7 @@
 //! Normalization of vectors.
 use super::{
     length::Length,
+    normals::Normal3f,
     vectors::{Vector2f, Vector2i, Vector3f, Vector3i},
 };
 
@@ -43,5 +44,13 @@ impl Normalize for Vector3i {
 
     fn normalize(&self) -> Self::Output {
         Into::<Vector3f>::into(self) / self.length()
+    }
+}
+
+impl Normalize for Normal3f {
+    type Output = Normal3f;
+
+    fn normalize(&self) -> Self::Output {
+        self / self.length()
     }
 }

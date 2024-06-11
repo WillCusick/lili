@@ -24,6 +24,8 @@ pub mod normals;
 
 pub mod points;
 
+pub mod dot;
+
 pub fn sqr<T>(v: T) -> T
 where
     T: Mul<Output = T> + Copy,

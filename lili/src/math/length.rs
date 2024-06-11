@@ -1,5 +1,6 @@
 //! Length trait and implementations for vectors.
 use super::{
+    normals::Normal3f,
     sqr,
     vectors::{Vector2f, Vector2i, Vector3f, Vector3i},
     Float,
@@ -86,5 +87,18 @@ impl Length for Vector3i {
 
     fn length(&self) -> Float {
         (self.length_squared() as Float).sqrt()
+    }
+}
+
+impl Length for Normal3f {
+    type TupleElementType = Float;
+    type LengthType = Float;
+
+    fn length_squared(&self) -> Float {
+        sqr(self.x) + sqr(self.y) + sqr(self.z)
+    }
+
+    fn length(&self) -> Float {
+        self.length_squared().sqrt()
     }
 }

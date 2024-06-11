@@ -5,8 +5,8 @@ use crate::math::tuples::Tuple;
 
 use super::{
     difference_of_products,
+    dot::Dot,
     length::Length,
-    num_traits::Abs,
     sqr,
     tuples::{
         from_tuple_conv_impl2, from_tuple_conv_impl3, index_impl2, index_impl3, index_mut_impl2,
@@ -14,38 +14,6 @@ use super::{
     },
     Float, FloatExt,
 };
-
-/// Trait for computing the dot product of two objects.
-pub trait Dot
-where
-    Self::Output: Abs,
-{
-    type Output;
-
-    /// Computes the dot product of `self` and `other`.
-    ///
-    /// # Arguments
-    ///
-    /// * `other` - The other object to compute the dot product with.
-    ///
-    /// # Returns
-    ///
-    /// The dot product of `self` and `other`.
-    fn dot(&self, other: &Self) -> Self::Output;
-
-    /// Computes the absolute value of the dot product of `self` and `other`.
-    ///
-    /// # Arguments
-    ///
-    /// * `other` - The other object to compute the absolute dot product with.
-    ///
-    /// # Returns
-    ///
-    /// The absolute value of the dot product of `self` and `other`.
-    fn abs_dot(&self, other: &Self) -> Self::Output {
-        self.dot(other).abs()
-    }
-}
 
 /// Trait for calculating the angle between two objects.
 pub trait AngleBetween {
@@ -248,39 +216,6 @@ from_tuple_conv_impl2!(Vector2i, Vector2f, Float);
 from_tuple_conv_impl3!(Vector3i, Vector3f, Float);
 from_tuple_conv_impl2!(&Vector2i, Vector2f, Float);
 from_tuple_conv_impl3!(&Vector3i, Vector3f, Float);
-
-// Vector function trait impls
-impl Dot for Vector2f {
-    type Output = Float;
-
-    fn dot(&self, other: &Self) -> Self::Output {
-        self.x * other.x + self.y * other.y
-    }
-}
-
-impl Dot for Vector3f {
-    type Output = Float;
-
-    fn dot(&self, other: &Self) -> Self::Output {
-        self.x * other.x + self.y * other.y + self.z * other.z
-    }
-}
-
-impl Dot for Vector2i {
-    type Output = i32;
-
-    fn dot(&self, other: &Self) -> Self::Output {
-        self.x * other.x + self.y * other.y
-    }
-}
-
-impl Dot for Vector3i {
-    type Output = i32;
-
-    fn dot(&self, other: &Self) -> Self::Output {
-        self.x * other.x + self.y * other.y + self.z * other.z
-    }
-}
 
 impl AngleBetween for Vector2f {
     fn angle_between(&self, other: &Self) -> Float {
