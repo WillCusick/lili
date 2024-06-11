@@ -469,19 +469,15 @@ pub(crate) use from_tuple_conv_impl3;
 from_tuple_impl2!(Point2f, Vector2f);
 from_tuple_impl2!(Vector2f, Point2f);
 from_tuple_impl3!(Point3f, Vector3f);
-from_tuple_impl3!(Point3f, Normal3f);
 from_tuple_impl3!(Vector3f, Point3f);
 from_tuple_impl3!(Vector3f, Normal3f);
-from_tuple_impl3!(Normal3f, Point3f);
 from_tuple_impl3!(Normal3f, Vector3f);
 
 from_tuple_impl2!(&Point2f, Vector2f);
 from_tuple_impl2!(&Vector2f, Point2f);
 from_tuple_impl3!(&Point3f, Vector3f);
-from_tuple_impl3!(&Point3f, Normal3f);
 from_tuple_impl3!(&Vector3f, Point3f);
 from_tuple_impl3!(&Vector3f, Normal3f);
-from_tuple_impl3!(&Normal3f, Point3f);
 from_tuple_impl3!(&Normal3f, Vector3f);
 
 // i32 tuple conversions
