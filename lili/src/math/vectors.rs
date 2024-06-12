@@ -75,7 +75,7 @@ where
 }
 
 /// Represents a 2-dimensional vector.
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Copy)]
 pub struct Vector2<T> {
     /// The x-coordinate of the vector.
     pub x: T,
@@ -100,7 +100,7 @@ index_impl2!(Vector2);
 index_mut_impl2!(Vector2);
 
 /// Represents a 3-dimensional vector.
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Copy)]
 pub struct Vector3<T> {
     /// The x-coordinate of the vector.
     pub x: T,

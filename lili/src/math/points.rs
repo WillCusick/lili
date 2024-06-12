@@ -79,7 +79,7 @@ impl Distance for Point3i {
 ///
 /// A point is a zero-dimensional location in space.
 /// It is represented by a pair of coordinates.
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Copy)]
 pub struct Point2<T> {
     /// The x-coordinate of the point.
     pub x: T,
@@ -104,7 +104,7 @@ index_impl2!(Point2);
 index_mut_impl2!(Point2);
 
 /// Represents a 3-dimensional point.
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Copy)]
 pub struct Point3<T> {
     /// The x-coordinate of the point.
     pub x: T,

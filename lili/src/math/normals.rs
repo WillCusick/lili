@@ -7,7 +7,7 @@ use super::{
 };
 
 /// Represents a 3-dimensional normal.
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Copy)]
 pub struct Normal3<T> {
     /// The x-coordinate of the normal.
     pub x: T,
