@@ -9,6 +9,10 @@ use std::ffi::OsString;
 
 use crate::scene::BasicScene;
 
+pub mod media;
+
+pub mod rays;
+
 #[derive(Debug, Default)]
 pub struct Options {
     pub seed: u32,

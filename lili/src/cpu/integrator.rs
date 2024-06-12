@@ -6,6 +6,7 @@ use crate::{
         vectors::Vector3f,
         FloatExt,
     },
+    rays::{Ray, RayDifferential},
     Float, Options,
 };
 
@@ -107,10 +108,6 @@ struct SurfaceInteraction {}
 
 #[derive(Default)]
 struct Bounds3f {}
-
-struct Ray {
-    pub d: Vector3f,
-}
 
 #[derive(Clone, Copy)]
 struct Sampler {}
@@ -224,10 +221,6 @@ impl ProgressReporter {
     fn update(&self, progress: i32) {
         todo!()
     }
-}
-
-struct RayDifferential {
-    ray: Ray,
 }
 
 struct CameraRayDifferential {
